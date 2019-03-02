@@ -12,7 +12,7 @@ ctx = spf.register_plugin(contextualize)
 
 @ctx.route("/")
 def index(request, context):
-    session = context.shared.session
+    session = context.shared.request.session
     token = session.get("RememberMe", None)
     if token is None:
         session['RememberMe'] = token = str(uuid4())
