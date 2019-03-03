@@ -41,7 +41,7 @@ instance = session = Session()
 async def add_session_to_request_context(request, context):
     interface = context.interface
     shared_context = context.shared
-    shared_request_context = shared_context.request
+    shared_request_context = shared_context.request[id(request)]
     dummy_request = shared_request_context.create_child_context()
     dummy_request.cookies = request.cookies
     session_dict = await interface.open(dummy_request)
@@ -51,6 +51,6 @@ async def add_session_to_request_context(request, context):
 @session.middleware(attach_to="response", with_context=True)
 async def save_session(request, response, context):
     interface = context.interface
-    shared_request_context = context.shared.request
+    shared_request_context = context.shared.request[id(request)]
     # We dont need a dummy request or response here
     await interface.save(shared_request_context, response)

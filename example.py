@@ -12,11 +12,11 @@ ctx = spf.register_plugin(contextualize)
 
 @ctx.route("/")
 def index(request, context):
-    session = context.shared.request.session
+    session = context.shared.request[id(request)].session
     token = session.get("RememberMe", None)
     if token is None:
         session['RememberMe'] = token = str(uuid4())
-    return text(token)
+    return text("{} {}".format(id(request), token))
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port="9998", debug=True, auto_reload=False)
+    app.run(host="127.0.0.1", port="9997", debug=True, auto_reload=False)
