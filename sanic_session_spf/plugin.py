@@ -37,6 +37,7 @@ class Session(SanicPlugin):
 
 instance = session = Session()
 
+
 @session.middleware(attach_to="request", with_context=True)
 async def add_session_to_request_context(request, context):
     interface = context.interface
@@ -51,6 +52,15 @@ async def add_session_to_request_context(request, context):
 @session.middleware(attach_to="response", with_context=True)
 async def save_session(request, response, context):
     interface = context.interface
-    shared_request_context = context.shared.request[id(request)]
+    try:
+        shared_request_context = context.shared.request[id(request)]
+    except KeyError as e:
+        # It is possible for RESPONSE middleware to run on a 404 error _before_
+        # the request middleware has run. So in this case, there is no session.
+        s = int(getattr(response, 'status', 200))
+        if 400 <= s <= 499:
+            return
+        raise
     # We dont need a dummy request or response here
     await interface.save(shared_request_context, response)
+
