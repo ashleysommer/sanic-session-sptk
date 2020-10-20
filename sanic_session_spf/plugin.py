@@ -35,6 +35,7 @@ class Session(SanicPlugin):
         log(logging.DEBUG, "Created Session named: {} on app."
             .format(interface.session_name))
 
+
 instance = session = Session()
 
 
@@ -54,7 +55,7 @@ async def save_session(request, response, context):
     interface = context.interface
     try:
         shared_request_context = context.shared.request[id(request)]
-    except KeyError as e:
+    except (AttributeError, KeyError) as e:
         # It is possible for RESPONSE middleware to run on a 404 error _before_
         # the request middleware has run. So in this case, there is no session.
         s = int(getattr(response, 'status', 200))
@@ -63,4 +64,3 @@ async def save_session(request, response, context):
         raise
     # We dont need a dummy request or response here
     await interface.save(shared_request_context, response)
-
