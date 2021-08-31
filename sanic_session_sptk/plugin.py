@@ -2,7 +2,7 @@
 #
 import logging
 
-from spf import SanicPlugin
+from sanic_plugin_toolkit import SanicPlugin
 from sanic_session import Session as RealSanicSession, InMemorySessionInterface
 
 

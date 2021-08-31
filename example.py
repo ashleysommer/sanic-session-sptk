@@ -1,14 +1,14 @@
 from uuid import uuid4
 from sanic import Sanic
 from sanic.response import text
-from spf import SanicPluginsFramework
-from sanic_session_spf.plugin import session
-from spf.plugins import contextualize
+from sanic_plugin_toolkit import SanicPluginRealm
+from sanic_session_sptk.plugin import session
+from sanic_plugin_toolkit.plugins import contextualize
 
 app = Sanic(__name__)
-spf = SanicPluginsFramework(app)
-session_reg = spf.register_plugin(session, interface=None)
-ctx = spf.register_plugin(contextualize)
+sptk = SanicPluginRealm(app)
+session_reg = sptk.register_plugin(session, interface=None)
+ctx = sptk.register_plugin(contextualize)
 
 @ctx.route("/")
 def index(request, context):
